@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/pinyin-pro"></script>
+    <title>汉语新解卡片</title>
+    <style>
+        body {{
+            font-family: 'Noto Serif SC', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f4f8;
+        }}
+        .card {{
+            width: 340px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }}
+        .card:hover {{
+            transform: translateY(-10px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }}
+        .card-header {{
+            background-color: {primary_color};
+            color: white;
+            padding: 20px;
+            font-size: 48px;
+            font-weight: bold;
+            letter-spacing: 5px;
+        }}
+        .card-body {{
+            padding: 30px;
+        }}
+        .pinyin {{
+            font-size: 18px;
+            color: white;
+            padding: 10px;
+        }}
+        .translation {{
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }}
+        .divider {{
+            height: 2px;
+            background-color: {secondary_color};
+            margin: 20px 0;
+        }}
+        .explanation {{
+            font-size: 16px;
+            line-height: 1.6;
+            color: #444;
+        }}
+        .explanation::before {{
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background-color: {secondary_color};
+            margin-right: 10px;
+            vertical-align: middle;
+        }}
+        .xinjie {{
+            font-size: 14px;
+            color: gray;
+            margin-top: 20px;
+        }}
+        ruby rt {{
+    font-size: 14px; /* 设置拼音字体大小为12px，可以根据需要调整 */
+}}
+
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">
+            <div id="pinyin-header"></div>  <!-- 动态插入拼音结果 -->
+        </div>
+        
+        <div class="card-body">
+            <div class="translation">{translation_en}</div>
+            <div class="translation">{translation_jp}</div>
+            <div class="divider"></div>
+            <div class="explanation">{explanation}</div>
+            <div class="xinjie">词语新解</div>
+        </div>
+    </div>
+
+    <script>
+        // 使用pinyin-pro生成带拼音的HTML
+        const word = '{word}';
+        const pinyinHtml = window.pinyinPro.html(word);
+
+        // 将拼音HTML插入到页面中的pinyin-header div中
+        document.getElementById('pinyin-header').innerHTML = pinyinHtml;
+    </script>
+</body>
+</html>
