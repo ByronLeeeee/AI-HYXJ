@@ -11,6 +11,7 @@ load_dotenv()
 # API configuration
 API_KEY = os.environ.get("API_KEY")
 ENDPOINT = os.environ.get("ENDPOINT")
+MODEL = os.environ.get("MODEL","")
 HEADERS = {
     "Content-Type": "application/json",
     "api-key": API_KEY,
@@ -25,6 +26,7 @@ def get_response(word: str) -> dict:
     :return: A dictionary containing the explanation and translations
     """
     payload = {
+        "model": MODEL,
         "messages": [
             {
                 "role": "system",
@@ -150,5 +152,5 @@ st.markdown("---")
 st.write("使用说明：")
 st.write("1. 输入词语，点击按钮，即可生成")
 st.write("2. 在侧边栏选择使用自定义颜色或随机颜色")
-st.write("3. 灵感来源：李维刚的Prompt。")
-st.write("4. 制作者：李伯阳律师 （微信：legal-lby）")
+st.write("3. 灵感来源：李维刚的Prompt")
+st.write("4. 项目制作者：李伯阳律师 （微信：legal-lby）")

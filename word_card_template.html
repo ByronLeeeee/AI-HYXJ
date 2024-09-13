@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://unpkg.com/pinyin-pro"></script>
+    <script src="https://unpkg.com/to-jyutping@1.0.0/dist/index.js"></script>
     <title>汉语新解卡片</title>
     <style>
         body {{
@@ -73,18 +74,18 @@
             margin-top: 20px;
         }}
         ruby rt {{
-    font-size: 14px; /* 设置拼音字体大小为12px，可以根据需要调整 */
-}}
-
+            font-size: 14px;
+        }}
     </style>
 </head>
 <body>
     <div class="card">
         <div class="card-header">
-            <div id="pinyin-header"></div>  <!-- 动态插入拼音结果 -->
+            <div id="pinyin-header"></div>
         </div>
         
         <div class="card-body">
+            <div id="yueyu" class="translation"></div>
             <div class="translation">{translation_en}</div>
             <div class="translation">{translation_jp}</div>
             <div class="divider"></div>
@@ -94,12 +95,21 @@
     </div>
 
     <script>
-        // 使用pinyin-pro生成带拼音的HTML
         const word = '{word}';
         const pinyinHtml = window.pinyinPro.html(word);
 
-        // 将拼音HTML插入到页面中的pinyin-header div中
         document.getElementById('pinyin-header').innerHTML = pinyinHtml;
+
+        const yueyu = '{word}';
+        
+        function getJyutpingText(text) {{
+            if (!/[\u4e00-\u9fa5]/.test(text)) {{
+                return text; // 如果没有中文字符，直接返回原文
+            }}
+            return ToJyutping.getJyutpingText(text);
+        }}
+
+        document.getElementById('yueyu').textContent = getJyutpingText(yueyu);
     </script>
 </body>
 </html>
