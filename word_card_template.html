@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://unpkg.com/pinyin-pro"></script>
     <script src="https://unpkg.com/to-jyutping@1.0.0/dist/index.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <title>汉语新解卡片</title>
     <style>
         body {{
@@ -15,6 +16,12 @@
             height: 100vh;
             margin: 0;
             background-color: #f0f4f8;
+            flex-direction: column;
+        }}
+        .card-container {{
+            padding: 30px;
+            background-color: #f0f4f8;
+            border-radius: 25px;
         }}
         .card {{
             width: 340px;
@@ -56,8 +63,9 @@
         }}
         .explanation {{
             font-size: 16px;
-            line-height: 1.6;
+            line-height: 1.8;
             color: #444;
+            letter-spacing: 0.1px
         }}
         .explanation::before {{
             content: '';
@@ -76,29 +84,50 @@
         ruby rt {{
             font-size: 14px;
         }}
+        .export-button {{
+            padding: 10px 20px;
+            margin: 20px;
+            font-size: 16px;
+            color: #000;
+            background-color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }}
+        .export-button:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }}
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="card-header">
-            <div id="pinyin-header"></div>
+    <div class="card-container">
+        <div class="card">
+            <div class="card-header">
+                <div id="pinyin"></div>
+            </div>
+            
+            <div class="card-body">
+                <div id="yueyu" class="translation"></div>
+                <div class="translation">{translation_en}</div>
+                <div class="translation">{translation_jp}</div>
+                <div class="divider"></div>
+                <div class="explanation">{explanation}</div>
+                <div class="xinjie">词语新解</div>
+            </div>
         </div>
-        
-        <div class="card-body">
-            <div id="yueyu" class="translation"></div>
-            <div class="translation">{translation_en}</div>
-            <div class="translation">{translation_jp}</div>
-            <div class="divider"></div>
-            <div class="explanation">{explanation}</div>
-            <div class="xinjie">词语新解</div>
-        </div>
+    </div>
+    <div>
+        <button class="export-button" onclick="captureAndDownload()">导出图片</button>
     </div>
 
     <script>
         const word = '{word}';
         const pinyinHtml = window.pinyinPro.html(word);
 
-        document.getElementById('pinyin-header').innerHTML = pinyinHtml;
+        document.getElementById('pinyin').innerHTML = pinyinHtml;
 
         const yueyu = '{word}';
         
@@ -110,6 +139,43 @@
         }}
 
         document.getElementById('yueyu').textContent = getJyutpingText(yueyu);
+    </script>
+    <script>
+        function captureAndDownload() {{
+            const cardContainer = document.querySelector('.card-container');
+            html2canvas(cardContainer, {{
+                backgroundColor: null,
+                scale: 2,
+                logging: false,
+                useCORS: true,
+                allowTaint: true,
+                letterRendering: true
+            }}).then(canvas => {{
+                const image = canvas.toDataURL("image/png");
+                const link = document.createElement('a');
+                link.href = image;
+                link.download = `{word}.png`;
+                link.click();
+                
+                // Send the image data to the Streamlit backend
+                const encodedImage = image.split(',')[1];
+                fetch('/_stcore/upload', {{
+                    method: 'POST',
+                    body: JSON.stringify({{
+                        'name': `${word}.png`,
+                        'data': encodedImage,
+                        'mime_type': 'image/png'
+                    }}),
+                    headers: {{
+                        'Content-Type': 'application/json'
+                    }}
+                }}).then(response => response.json())
+                  .then(data => {{
+                      // Notify the Streamlit app that the image is ready
+                      Streamlit.setComponentValue(data);
+                  }});
+            }});
+        }}
     </script>
 </body>
 </html>
