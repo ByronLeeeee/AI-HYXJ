@@ -4,7 +4,7 @@
 
 汉语新解是一个创新的Streamlit应用，旨在以独特和幽默的方式解释中文词语。它结合了AI技术和文学风格，为用户提供富有洞察力和讽刺意味的词语解释。
 
-<img src="./sample/sample.png" width="800">
+<img src="./sample/sample.png" width="500">
 
 ## 特性
 
@@ -32,7 +32,9 @@
    API_KEY=''
    ENDPOINT=''
    MODEL='' # Azure OpenAI可以不填
-
+   ```
+   或
+   ```
    # Ollama API
    API_KEY='ollama'
    ENDPOINT='http://localhost:11434/v1/chat/completions'
@@ -63,27 +65,3 @@
 ## 许可
 
 本项目采用MIT许可证。详情请见 [LICENSE](LICENSE) 文件。
-
-```
-MIT License
-
-Copyright (c) [year] [fullname]
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
