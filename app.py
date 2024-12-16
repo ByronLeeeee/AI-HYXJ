@@ -4,7 +4,12 @@ import requests
 import json
 from dotenv import load_dotenv
 import os
+from openai import OpenAI
 
+import io
+from PIL import Image, ImageDraw, ImageFont
+# 导入必要的库
+import base64
 # Load environment variables
 load_dotenv()
 
@@ -16,7 +21,7 @@ HEADERS = {
     "Content-Type": "application/json",
     "api-key": API_KEY,
 }
-
+client = OpenAI(api_key=API_KEY, base_url=ENDPOINT)
 # Function to get response from the API
 def get_response(word: str) -> dict:
     """
@@ -59,17 +64,20 @@ Few-shot示例:
     }
 
     try:
-        response = requests.post(ENDPOINT, headers=HEADERS, json=payload)
-        response.raise_for_status()
-        result_data = response.json()
-        if "choices" not in result_data or not result_data["choices"]:
-            raise ValueError("Invalid response format")
-        return json.loads(result_data["choices"][0]["message"]["content"])
+        response = client.chat.completions.create(**payload)
+        
+        # 直接获取解析后的字典
+        #result_data = response.choices[0].message.content 
+        result_data = json.loads(response.choices[0].message.content) 
+        print(result_data)
+        print(type(result_data))
+        return result_data  # 返回字典
     except requests.RequestException as e:
         st.error(f"请求失败。错误：{e}")
     except (json.JSONDecodeError, KeyError, ValueError) as e:
         st.error(f"解析响应数据失败。错误：{e}")
     return {}
+
 
 # Modigliani color schemes
 color_schemes = [
@@ -111,6 +119,7 @@ if st.button("解释吧", type="primary"):
         st.session_state.input_word = word
         result = get_response(word)
         if result:
+            print(result)
             st.session_state.translation_en = result.get("en", "")
             st.session_state.translation_jp = result.get("jp", "")
             st.session_state.explanation = result.get("explanation", "")
@@ -146,6 +155,31 @@ html_content = html_content.format(
 # Display HTML if input word exists
 if st.session_state.input_word:
     st.components.v1.html(html_content, height=600)
+
+    # 查找 html 中的图片链接
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(html_content, 'html.parser')
+    img_tags = soup.find_all('img')
+    img_urls = [img_tag.get('src') for img_tag in img_tags if img_tag.get('src')]
+    print(img_urls)
+    # 下载图片到本地
+    if img_urls:
+        for img_url in img_urls:
+            try:
+                response = requests.get(img_url)
+                response.raise_for_status()  # 检查下载是否成功
+
+                # 获取文件名
+                filename = os.path.basename(img_url)
+
+                # 保存图片
+                with open(filename, 'wb') as f:
+                    f.write(response.content)
+
+                print(f"图片 {filename} 下载成功！")
+
+            except requests.exceptions.RequestException as e:
+                print(f"下载图片 {img_url} 失败: {e}")
 
 # Add instructions
 st.markdown("---")
